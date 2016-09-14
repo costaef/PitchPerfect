@@ -17,9 +17,6 @@ class RecordSoundsViewController: UIViewController {
     
     var audioRecorder: AVAudioRecorder?
     
-    let recordedAudioFileName = "recordedAudio.wav"
-    let stopRecordingSegueIdentifier = "stopRecordingSegue"
-    
     enum RecordingState {
         case NewRecord, Recording, Stopped, FinishRecording, Error
     }
@@ -46,7 +43,7 @@ class RecordSoundsViewController: UIViewController {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
         
-        if segue.identifier == stopRecordingSegueIdentifier {
+        if segue.identifier == Constants.stopRecordingSegueIdentifier.rawValue {
             //let playSoundsVC = segue.destination as! PlaySoundsViewController
         }
     }
@@ -58,7 +55,7 @@ class RecordSoundsViewController: UIViewController {
         
         configureUI(recordingState: .Recording)
         
-        audioRecorder = createAudioRecorder(fileName: recordedAudioFileName)
+        audioRecorder = createAudioRecorder(fileName: Constants.recordedAudioFileName.rawValue)
         startRecordingAudio(audioRecorder: audioRecorder!)
     }
     
@@ -74,28 +71,29 @@ class RecordSoundsViewController: UIViewController {
     
     
     // MARK: - UI Configuration
+    
     func configureUI(recordingState: RecordingState) {
         switch recordingState {
         case .NewRecord:
             self.recordButton.isEnabled = true
             self.stopButton.isEnabled = false
-            self.recordLabel.text = "Tap to record"
+            self.recordLabel.text = RecordingMessages.newRecord.rawValue
         case .Recording:
             self.recordButton.isEnabled = false
             self.stopButton.isEnabled = true
-            self.recordLabel.text = "Recording..."
+            self.recordLabel.text = RecordingMessages.recording.rawValue
         case .Stopped:
             self.recordButton.isEnabled = false
             self.stopButton.isEnabled = false
-            self.recordLabel.text = "Saving recorded audio..."
+            self.recordLabel.text = RecordingMessages.stopped.rawValue
         case .FinishRecording:
             self.recordButton.isEnabled = false
             self.stopButton.isEnabled = false
-            self.recordLabel.text = "Success!"
+            self.recordLabel.text = RecordingMessages.finishRecording.rawValue
         case .Error:
             self.recordButton.isEnabled = true
             self.stopButton.isEnabled = false
-            self.recordLabel.text = "An error occured on recording. Please tap to record again."
+            self.recordLabel.text = RecordingMessages.error.rawValue
         }
     }
 }
@@ -140,7 +138,7 @@ extension RecordSoundsViewController: AVAudioRecorderDelegate {
         
         if flag {
             configureUI(recordingState: .FinishRecording)
-            performSegue(withIdentifier: stopRecordingSegueIdentifier, sender: self.audioRecorder?.url)
+            performSegue(withIdentifier: Constants.stopRecordingSegueIdentifier.rawValue, sender: self.audioRecorder?.url)
         } else {
             configureUI(recordingState: .Error)
         }
