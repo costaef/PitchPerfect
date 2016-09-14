@@ -40,11 +40,11 @@ class RecordSoundsViewController: UIViewController {
     // MARK: - Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        // Pass the recorded audio URL to the play sounds view controller.
         
         if segue.identifier == Constants.stopRecordingSegueIdentifier.rawValue {
-            //let playSoundsVC = segue.destination as! PlaySoundsViewController
+            let playSoundsVC = segue.destination as! PlaySoundsViewController
+            playSoundsVC.recordedAudioFileUrl = sender as? URL
         }
     }
     

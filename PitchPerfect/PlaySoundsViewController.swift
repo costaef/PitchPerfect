@@ -18,10 +18,12 @@ class PlaySoundsViewController: UIViewController {
     @IBOutlet weak var reverbButton: UIButton!
     @IBOutlet weak var stopButton: UIButton!
     
+    var recordedAudioFileUrl: URL? = nil
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        
+        print(recordedAudioFileUrl!)
     }
 
     override func didReceiveMemoryWarning() {
