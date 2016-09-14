@@ -18,6 +18,7 @@ class RecordSoundsViewController: UIViewController {
     var audioRecorder: AVAudioRecorder?
     
     let recordedAudioFileName = "recordedAudio.wav"
+    let stopRecordingSegueIdentifier = "stopRecordingSegue"
     
     enum RecordingState {
         case NewRecord, Recording, Stopped, FinishRecording, Error
@@ -44,6 +45,10 @@ class RecordSoundsViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
+        
+        if segue.identifier == stopRecordingSegueIdentifier {
+            //let playSoundsVC = segue.destination as! PlaySoundsViewController
+        }
     }
     
     
@@ -132,10 +137,10 @@ extension RecordSoundsViewController: AVAudioRecorderDelegate {
     // MARK: - AVAudioRecorderDelegate
     
     func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
-        print("Audio Recorder did finish recording. Successfully: \(flag)")
         
         if flag {
             configureUI(recordingState: .FinishRecording)
+            performSegue(withIdentifier: stopRecordingSegueIdentifier, sender: self.audioRecorder?.url)
         } else {
             configureUI(recordingState: .Error)
         }
