@@ -19,10 +19,18 @@ class RecordSoundsViewController: UIViewController {
     
     let recordedAudioFileName = "recordedAudio.wav"
     
+    enum RecordingState {
+        case NewRecord, Recording, Stopped, FinishRecording, Error
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        configureUI(recordingState: .NewRecord)
     }
 
     override func didReceiveMemoryWarning() {
@@ -31,37 +39,67 @@ class RecordSoundsViewController: UIViewController {
     }
     
 
-    /*
     // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
     }
-    */
+    
     
     // MARK: - Actions
 
     @IBAction func recordButtonTouch(_ sender: UIButton) {
-        print("Recording...")
         
-        self.audioRecorder = createAudioRecorder(fileName: recordedAudioFileName)
-        startRecordingAudio(audioRecorder: self.audioRecorder!)
+        configureUI(recordingState: .Recording)
+        
+        audioRecorder = createAudioRecorder(fileName: recordedAudioFileName)
+        startRecordingAudio(audioRecorder: audioRecorder!)
     }
     
     @IBAction func stopButtonTouch(_ sender: UIButton) {
-        print("Stop...")
         
-        if self.audioRecorder != nil {
-            stopRecordingAudio(audioRecorder: self.audioRecorder!)
+        if audioRecorder != nil {
+            configureUI(recordingState: .Stopped)
+            stopRecordingAudio(audioRecorder: audioRecorder!)
+        } else {
+            configureUI(recordingState: .Error)
         }
     }
     
     
+    // MARK: - UI Configuration
+    func configureUI(recordingState: RecordingState) {
+        switch recordingState {
+        case .NewRecord:
+            self.recordButton.isEnabled = true
+            self.stopButton.isEnabled = false
+            self.recordLabel.text = "Tap to record"
+        case .Recording:
+            self.recordButton.isEnabled = false
+            self.stopButton.isEnabled = true
+            self.recordLabel.text = "Recording..."
+        case .Stopped:
+            self.recordButton.isEnabled = false
+            self.stopButton.isEnabled = false
+            self.recordLabel.text = "Saving recorded audio..."
+        case .FinishRecording:
+            self.recordButton.isEnabled = false
+            self.stopButton.isEnabled = false
+            self.recordLabel.text = "Success!"
+        case .Error:
+            self.recordButton.isEnabled = true
+            self.stopButton.isEnabled = false
+            self.recordLabel.text = "An error occured on recording. Please tap to record again."
+        }
+    }
+}
+
+extension RecordSoundsViewController: AVAudioRecorderDelegate {
+    
     // MARK: - Audio Recorder
     
-    private func createAudioRecorder(fileName: String) -> AVAudioRecorder {
+    fileprivate func createAudioRecorder(fileName: String) -> AVAudioRecorder {
         let dirPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as String
         var filePath = URL(fileURLWithPath: dirPath, isDirectory: true)
         filePath.appendPathComponent(fileName)
@@ -78,22 +116,28 @@ class RecordSoundsViewController: UIViewController {
         return audioRecorder
     }
     
-    private func startRecordingAudio(audioRecorder: AVAudioRecorder) {
+    fileprivate func startRecordingAudio(audioRecorder: AVAudioRecorder) {
         audioRecorder.prepareToRecord()
         audioRecorder.record()
     }
     
-    private func stopRecordingAudio(audioRecorder: AVAudioRecorder) {
+    fileprivate func stopRecordingAudio(audioRecorder: AVAudioRecorder) {
         audioRecorder.stop()
         
         let session = AVAudioSession.sharedInstance()
         try! session.setActive(false)
     }
-}
-
-extension RecordSoundsViewController: AVAudioRecorderDelegate {
+    
+    
+    // MARK: - AVAudioRecorderDelegate
     
     func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
         print("Audio Recorder did finish recording. Successfully: \(flag)")
+        
+        if flag {
+            configureUI(recordingState: .FinishRecording)
+        } else {
+            configureUI(recordingState: .Error)
+        }
     }
 }
