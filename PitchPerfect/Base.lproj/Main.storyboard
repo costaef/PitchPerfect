@@ -75,13 +75,13 @@
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="tW2-iX-psb">
                                         <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iTA-xa-oea" userLabel="Snail Button">
+                                            <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iTA-xa-oea" userLabel="Snail Button">
                                                 <state key="normal" image="Snail"/>
                                                 <connections>
                                                     <action selector="playButtonTouch:" destination="uy9-rb-EKK" eventType="touchUpInside" id="TVK-WB-CVH"/>
                                                 </connections>
                                             </button>
-                                            <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7WS-pT-bau" userLabel="Rabbit Button">
+                                            <button opaque="NO" tag="1" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7WS-pT-bau" userLabel="Rabbit Button">
                                                 <state key="normal" image="Rabbit"/>
                                                 <connections>
                                                     <action selector="playButtonTouch:" destination="uy9-rb-EKK" eventType="touchUpInside" id="nzP-Oh-8oW"/>
@@ -121,7 +121,7 @@
                                             </button>
                                         </subviews>
                                     </stackView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rpy-Io-CfG">
+                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="rpy-Io-CfG">
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0OM-mJ-YfM" userLabel="Stop Button">
                                                 <state key="normal" image="Stop"/>
@@ -136,10 +136,10 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="pUE-nX-tDf" firstAttribute="top" secondItem="gMy-Yd-aWr" secondAttribute="bottom" id="Pan-bF-2qM"/>
-                            <constraint firstItem="gMy-Yd-aWr" firstAttribute="top" secondItem="yHa-F9-gui" secondAttribute="bottom" id="gA3-I6-4g9"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="gMy-Yd-aWr" secondAttribute="trailing" id="lV5-SU-wlb"/>
-                            <constraint firstItem="gMy-Yd-aWr" firstAttribute="leading" secondItem="vkb-RJ-MlH" secondAttribute="leadingMargin" id="uew-Ns-K3C"/>
+                            <constraint firstItem="gMy-Yd-aWr" firstAttribute="top" secondItem="yHa-F9-gui" secondAttribute="bottom" id="6JY-FU-pYB"/>
+                            <constraint firstItem="gMy-Yd-aWr" firstAttribute="leading" secondItem="vkb-RJ-MlH" secondAttribute="leadingMargin" id="IBJ-Hl-bTr"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="gMy-Yd-aWr" secondAttribute="trailing" id="O46-bO-B5G"/>
+                            <constraint firstItem="pUE-nX-tDf" firstAttribute="top" secondItem="gMy-Yd-aWr" secondAttribute="bottom" id="hfF-kT-WgZ"/>
                         </constraints>
                     </view>
                     <connections>
@@ -176,13 +176,13 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Chipmunk" width="100" height="100"/>
-        <image name="DarthVader" width="100" height="100"/>
+        <image name="Chipmunk" width="80" height="80"/>
+        <image name="DarthVader" width="80" height="80"/>
         <image name="Echo" width="80" height="80"/>
-        <image name="Rabbit" width="100" height="100"/>
+        <image name="Rabbit" width="80" height="80"/>
         <image name="RecordMic" width="100" height="100"/>
         <image name="Reverb" width="80" height="80"/>
-        <image name="Snail" width="100" height="100"/>
+        <image name="Snail" width="80" height="80"/>
         <image name="Stop" width="50" height="50"/>
     </resources>
 </document>

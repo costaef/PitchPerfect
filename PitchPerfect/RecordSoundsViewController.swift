@@ -102,7 +102,7 @@ extension RecordSoundsViewController: AVAudioRecorderDelegate {
     
     // MARK: - Audio Recorder
     
-    fileprivate func createAudioRecorder(fileName: String) -> AVAudioRecorder {
+    func createAudioRecorder(fileName: String) -> AVAudioRecorder {
         let dirPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as String
         var filePath = URL(fileURLWithPath: dirPath, isDirectory: true)
         filePath.appendPathComponent(fileName)
@@ -119,12 +119,12 @@ extension RecordSoundsViewController: AVAudioRecorderDelegate {
         return audioRecorder
     }
     
-    fileprivate func startRecordingAudio(audioRecorder: AVAudioRecorder) {
+    func startRecordingAudio(audioRecorder: AVAudioRecorder) {
         audioRecorder.prepareToRecord()
         audioRecorder.record()
     }
     
-    fileprivate func stopRecordingAudio(audioRecorder: AVAudioRecorder) {
+    func stopRecordingAudio(audioRecorder: AVAudioRecorder) {
         audioRecorder.stop()
         
         let session = AVAudioSession.sharedInstance()
