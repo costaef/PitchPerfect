@@ -20,6 +20,10 @@ class PlaySoundsViewController: UIViewController {
     
     var recordedAudioFileUrl: URL? = nil
     
+    enum PlayButtonType: Int {
+        case Snail = 0, Rabbit, Chipmunk, DarthVader, Echo, Reverb
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -32,20 +36,29 @@ class PlaySoundsViewController: UIViewController {
     }
     
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
     // MARK: - Actions
     
     @IBAction func playButtonTouch(_ sender: UIButton) {
         print("Play Button with Tag: \(sender.tag)")
+        
+        if let playButtonType = PlayButtonType(rawValue: sender.tag) {
+            let audioPlayer = AudioEffectPlayer(audioFileUrl: recordedAudioFileUrl!)
+            
+            switch playButtonType {
+            case .Snail:
+                audioPlayer.play(withAudioEffect: .snailEffect)
+            case .Rabbit:
+                audioPlayer.play(withAudioEffect: .rabbitEffect)
+            case .Chipmunk:
+                audioPlayer.play(withAudioEffect: .chipmunkEffect)
+            case .DarthVader:
+                audioPlayer.play(withAudioEffect: .darthVaderEffect)
+            case .Echo:
+                audioPlayer.play(withAudioEffect: .echoEffect)
+            case .Reverb:
+                audioPlayer.play(withAudioEffect: .reverbEffect)
+            }
+        }
     }
     
     @IBAction func stopButtonTouch(_ sender: UIButton) {

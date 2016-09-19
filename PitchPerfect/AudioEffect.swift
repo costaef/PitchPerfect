@@ -12,8 +12,8 @@ struct AudioEffect {
     
     var rate: Float?
     var pitch: Float?
-    var isEchoEnabled: Bool?
-    var isReverbEnabled: Bool?
+    var isEchoEnabled: Bool = false
+    var isReverbEnabled: Bool = false
     
     init(rate: Float? = nil, pitch: Float? = nil, echo: Bool = false, reverb: Bool = false) {
         self.rate = rate
