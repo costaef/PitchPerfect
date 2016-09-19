@@ -15,12 +15,13 @@ protocol AudioEffectPlayerDelegate {
 
 class AudioEffectPlayer {
     
-    lazy var audioFile = AVAudioFile()
-    var audioEngine = AVAudioEngine()
+    private lazy var audioFile = AVAudioFile()
+    private var audioEngine = AVAudioEngine()
     
     private var stopTimer: Timer?
     
     var delegate: AudioEffectPlayerDelegate?
+    
     
     init(audioFileUrl: URL) {
         do {
@@ -31,12 +32,13 @@ class AudioEffectPlayer {
         }
     }
     
+    
+    // MARK: - Player Functions
+    
     func play(withAudioEffect effect: AudioEffect) {
         
         attachAllNodes(rate: effect.rate, pitch: effect.pitch)
-        
         connectAudioNodes(audioNodeList(forEffect: effect))
-        
         scheduleAudioFile(atTime: nil, rate: effect.rate)
         
         do {
@@ -49,13 +51,28 @@ class AudioEffectPlayer {
         audioPlayerNode.play()
     }
     
+    @objc func stopAudio() {
+        
+        if let stopTimer = stopTimer {
+            stopTimer.invalidate()
+        }
+        
+        audioPlayerNode.stop()
+        audioEngine.stop()
+        audioEngine.reset()
+        
+        if let delegate = delegate {
+            delegate.audioPlayerDidStopPlaying(self)
+        }
+    }
+    
     
     // MARK: - Audio Nodes
     
-    let audioPlayerNode = AVAudioPlayerNode()
-    var changeRatePitchNode = AVAudioUnitTimePitch()
-    var echoNode = AVAudioUnitDistortion()
-    var reverbNode = AVAudioUnitReverb()
+    private let audioPlayerNode = AVAudioPlayerNode()
+    private var changeRatePitchNode = AVAudioUnitTimePitch()
+    private var echoNode = AVAudioUnitDistortion()
+    private var reverbNode = AVAudioUnitReverb()
     
     
     // MARK: - Attach Nodes
@@ -138,21 +155,6 @@ class AudioEffectPlayer {
             
             self.stopTimer = Timer(timeInterval: delayInSeconds, target: self, selector: #selector(self.stopAudio), userInfo: nil, repeats: false)
             RunLoop.main.add(self.stopTimer!, forMode: .defaultRunLoopMode)
-        }
-    }
-    
-    @objc func stopAudio() {
-        
-        if let stopTimer = stopTimer {
-            stopTimer.invalidate()
-        }
-        
-        audioPlayerNode.stop()
-        audioEngine.stop()
-        audioEngine.reset()
-        
-        if let delegate = delegate {
-            delegate.audioPlayerDidStopPlaying(self)
         }
     }
 }
