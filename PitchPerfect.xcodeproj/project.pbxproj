@@ -17,6 +17,7 @@
 		A0F4DF121D8D8D9600C0C333 /* AudioEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F4DF111D8D8D9600C0C333 /* AudioEffect.swift */; };
 		A0F4DF141D8F44E100C0C333 /* AudioEffectPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F4DF131D8F44E100C0C333 /* AudioEffectPlayer.swift */; };
 		A0F4DF161D8FFE5E00C0C333 /* UIViewController+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F4DF151D8FFE5E00C0C333 /* UIViewController+Alert.swift */; };
+		A0F4DF1A1D900FDF00C0C333 /* RecordSoundsViewController+AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F4DF191D900FDF00C0C333 /* RecordSoundsViewController+AudioRecorder.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		A0F4DF111D8D8D9600C0C333 /* AudioEffect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioEffect.swift; sourceTree = "<group>"; };
 		A0F4DF131D8F44E100C0C333 /* AudioEffectPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioEffectPlayer.swift; sourceTree = "<group>"; };
 		A0F4DF151D8FFE5E00C0C333 /* UIViewController+Alert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+Alert.swift"; sourceTree = "<group>"; };
+		A0F4DF191D900FDF00C0C333 /* RecordSoundsViewController+AudioRecorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RecordSoundsViewController+AudioRecorder.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,18 +67,35 @@
 			isa = PBXGroup;
 			children = (
 				A0F4DEF71D89750800C0C333 /* AppDelegate.swift */,
-				A0F4DF111D8D8D9600C0C333 /* AudioEffect.swift */,
-				A0F4DF131D8F44E100C0C333 /* AudioEffectPlayer.swift */,
 				A0F4DF0F1D8999F100C0C333 /* Constants.swift */,
-				A0F4DF151D8FFE5E00C0C333 /* UIViewController+Alert.swift */,
-				A0F4DF091D8975BE00C0C333 /* RecordSoundsViewController.swift */,
-				A0F4DF0B1D89903E00C0C333 /* PlaySoundsViewController.swift */,
+				A0F4DF171D900F3900C0C333 /* Player */,
+				A0F4DF181D900F5C00C0C333 /* ViewControllers */,
 				A0F4DEFB1D89750800C0C333 /* Main.storyboard */,
 				A0F4DEFE1D89750800C0C333 /* Assets.xcassets */,
 				A0F4DF001D89750800C0C333 /* LaunchScreen.storyboard */,
 				A0F4DF031D89750800C0C333 /* Info.plist */,
 			);
 			path = PitchPerfect;
+			sourceTree = "<group>";
+		};
+		A0F4DF171D900F3900C0C333 /* Player */ = {
+			isa = PBXGroup;
+			children = (
+				A0F4DF111D8D8D9600C0C333 /* AudioEffect.swift */,
+				A0F4DF131D8F44E100C0C333 /* AudioEffectPlayer.swift */,
+			);
+			name = Player;
+			sourceTree = "<group>";
+		};
+		A0F4DF181D900F5C00C0C333 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				A0F4DF151D8FFE5E00C0C333 /* UIViewController+Alert.swift */,
+				A0F4DF091D8975BE00C0C333 /* RecordSoundsViewController.swift */,
+				A0F4DF191D900FDF00C0C333 /* RecordSoundsViewController+AudioRecorder.swift */,
+				A0F4DF0B1D89903E00C0C333 /* PlaySoundsViewController.swift */,
+			);
+			name = ViewControllers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -158,6 +177,7 @@
 				A0F4DF0C1D89903E00C0C333 /* PlaySoundsViewController.swift in Sources */,
 				A0F4DEF81D89750800C0C333 /* AppDelegate.swift in Sources */,
 				A0F4DF141D8F44E100C0C333 /* AudioEffectPlayer.swift in Sources */,
+				A0F4DF1A1D900FDF00C0C333 /* RecordSoundsViewController+AudioRecorder.swift in Sources */,
 				A0F4DF161D8FFE5E00C0C333 /* UIViewController+Alert.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
