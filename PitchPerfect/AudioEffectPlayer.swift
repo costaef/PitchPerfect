@@ -19,7 +19,6 @@ class AudioEffectPlayer {
     init(audioFileUrl: URL) {
         do {
             try audioFile = AVAudioFile(forReading: audioFileUrl)
-            print("Audio File: \(audioFile)")
         } catch {
             // TODO: Handle error
             return
@@ -108,9 +107,7 @@ class AudioEffectPlayer {
     }
     
     private func connectAudioNodes(_ nodes: [AVAudioNode]) {
-        print("Connecting nodes: \(nodes)")
         for i in 0 ..< nodes.count - 1 {
-            print("Connect: Node 1 = \(nodes[i]) | Node 2 = \(nodes[i + 1])")
             audioEngine.connect(nodes[i], to: nodes[i + 1], format: audioFile.processingFormat)
         }
     }
