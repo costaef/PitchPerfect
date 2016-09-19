@@ -9,12 +9,18 @@
 import Foundation
 import AVFoundation
 
+protocol AudioEffectPlayerDelegate {
+    func audioPlayerDidStopPlaying(_ audioPlayer: AudioEffectPlayer)
+}
+
 class AudioEffectPlayer {
     
     lazy var audioFile = AVAudioFile()
     var audioEngine = AVAudioEngine()
     
-    var stopTimer: Timer?
+    private var stopTimer: Timer?
+    
+    var delegate: AudioEffectPlayerDelegate?
     
     init(audioFileUrl: URL) {
         do {
@@ -144,5 +150,9 @@ class AudioEffectPlayer {
         audioPlayerNode.stop()
         audioEngine.stop()
         audioEngine.reset()
+        
+        if let delegate = delegate {
+            delegate.audioPlayerDidStopPlaying(self)
+        }
     }
 }
