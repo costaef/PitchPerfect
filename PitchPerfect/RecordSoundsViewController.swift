@@ -21,10 +21,11 @@ class RecordSoundsViewController: UIViewController {
         case NewRecord, Recording, Stopped, FinishRecording, Error
     }
     
+    
+    // MARK: - Life Cycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -42,7 +43,7 @@ class RecordSoundsViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Pass the recorded audio URL to the play sounds view controller.
         
-        if segue.identifier == Constants.stopRecordingSegueIdentifier {
+        if segue.identifier == SegueIdentifiers.stopRecordingSegueIdentifier {
             let playSoundsVC = segue.destination as! PlaySoundsViewController
             playSoundsVC.recordedAudioFileUrl = sender as? URL
         }
@@ -53,17 +54,19 @@ class RecordSoundsViewController: UIViewController {
 
     @IBAction func recordButtonTouch(_ sender: UIButton) {
         
-        configureUI(recordingState: .Recording)
+        audioRecorder = createAudioRecorder(fileName: FileNames.recordedAudioFileName)
         
-        audioRecorder = createAudioRecorder(fileName: Constants.recordedAudioFileName)
-        startRecordingAudio(audioRecorder: audioRecorder!)
+        if let audioRecorder = audioRecorder {
+            configureUI(recordingState: .Recording)
+            startRecordingAudio(audioRecorder: audioRecorder)
+        }
     }
     
     @IBAction func stopButtonTouch(_ sender: UIButton) {
         
-        if audioRecorder != nil {
+        if let audioRecorder = audioRecorder {
             configureUI(recordingState: .Stopped)
-            stopRecordingAudio(audioRecorder: audioRecorder!)
+            stopRecordingAudio(audioRecorder: audioRecorder)
         } else {
             configureUI(recordingState: .Error)
         }
@@ -98,23 +101,33 @@ class RecordSoundsViewController: UIViewController {
     }
 }
 
+
 extension RecordSoundsViewController: AVAudioRecorderDelegate {
     
     // MARK: - Audio Recorder
     
-    func createAudioRecorder(fileName: String) -> AVAudioRecorder {
-        let dirPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as String
-        var filePath = URL(fileURLWithPath: dirPath, isDirectory: true)
-        filePath.appendPathComponent(fileName)
+    func createAudioRecorder(fileName: String) -> AVAudioRecorder? {
         
         let session = AVAudioSession.sharedInstance()
-        try! session.setCategory(AVAudioSessionCategoryPlayAndRecord)
         
-        var audioRecorder: AVAudioRecorder
-        try! audioRecorder = AVAudioRecorder(url: filePath, settings: [:])
+        do {
+            try session.setCategory(AVAudioSessionCategoryPlayAndRecord)
+        } catch {
+            // TODO: Error
+        }
         
-        audioRecorder.delegate = self
-        audioRecorder.isMeteringEnabled = true
+        var audioRecorder: AVAudioRecorder?
+        
+        do {
+            try audioRecorder = AVAudioRecorder(url: audioFileURL(fileName: fileName), settings: [:])
+        } catch {
+            // TODO: Error
+        }
+        
+        if let audioRecorder = audioRecorder {
+            audioRecorder.delegate = self
+            audioRecorder.isMeteringEnabled = true
+        }
         
         return audioRecorder
     }
@@ -131,6 +144,14 @@ extension RecordSoundsViewController: AVAudioRecorderDelegate {
         try! session.setActive(false)
     }
     
+    func audioFileURL(fileName: String) -> URL {
+        let dirPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as String
+        var filePath = URL(fileURLWithPath: dirPath, isDirectory: true)
+        filePath.appendPathComponent(fileName)
+        
+        return filePath
+    }
+    
     
     // MARK: - AVAudioRecorderDelegate
     
@@ -138,7 +159,7 @@ extension RecordSoundsViewController: AVAudioRecorderDelegate {
         
         if flag {
             configureUI(recordingState: .FinishRecording)
-            performSegue(withIdentifier: Constants.stopRecordingSegueIdentifier, sender: self.audioRecorder?.url)
+            performSegue(withIdentifier: SegueIdentifiers.stopRecordingSegueIdentifier, sender: self.audioRecorder?.url)
         } else {
             configureUI(recordingState: .Error)
         }

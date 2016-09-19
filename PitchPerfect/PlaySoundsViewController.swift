@@ -38,6 +38,7 @@ class PlaySoundsViewController: UIViewController {
             return
         }
         
+        showAlert(title: "Test", message: "Audio File OK.")
     }
 
     override func didReceiveMemoryWarning() {
@@ -95,7 +96,7 @@ class PlaySoundsViewController: UIViewController {
         }
     }
     
-    private func playButtons(enabled: Bool) {
+    func playButtons(enabled: Bool) {
         snailButton.isEnabled = enabled
         rabbitButton.isEnabled = enabled
         chipmunkButton.isEnabled = enabled
@@ -103,6 +104,9 @@ class PlaySoundsViewController: UIViewController {
         echoButton.isEnabled = enabled
         reverbButton.isEnabled = enabled
     }
+    
+    
+    
 }
 
 extension PlaySoundsViewController: AudioEffectPlayerDelegate {

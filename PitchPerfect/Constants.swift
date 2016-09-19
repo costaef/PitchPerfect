@@ -9,10 +9,14 @@
 import Foundation
 
 // As demonstrated in this article: https://github.com/raywenderlich/swift-style-guide#constants
-// The use of case-less enums is an advantage because it can't accidentally be instantiated (like a struct) and works as a pure namespace.
+// The use of case-less enums is an advantage because it can't accidentally be instantiated (like a struct)
+// and works as a pure namespace.
 
-enum Constants {
+enum FileNames {
     static let recordedAudioFileName = "recordedAudio.wav"
+}
+
+enum SegueIdentifiers {
     static let stopRecordingSegueIdentifier = "stopRecordingSegue"
 }
 
