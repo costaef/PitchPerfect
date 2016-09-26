@@ -10,7 +10,12 @@ import Foundation
 import AVFoundation
 
 protocol AudioEffectPlayerDelegate {
-    func audioPlayerDidStopPlaying(_ audioPlayer: AudioEffectPlayer)
+    func audioPlayerDidStop(_ audioPlayer: AudioEffectPlayer)
+    func audioPlayer(_ audioPlayer: AudioEffectPlayer, didFailWithError error: AudioEffectPlayerError)
+}
+
+enum AudioEffectPlayerError: Error {
+    case FileError, PlayingError
 }
 
 class AudioEffectPlayer {
@@ -27,7 +32,10 @@ class AudioEffectPlayer {
         do {
             try file = AVAudioFile(forReading: fileUrl)
         } catch {
-            // TODO: Handle error
+            if let delegate = delegate {
+                delegate.audioPlayer(self, didFailWithError: .FileError)
+            }
+            
             return
         }
     }
@@ -44,7 +52,10 @@ class AudioEffectPlayer {
         do {
             try engine.start()
         } catch {
-            // TODO: Handle error
+            if let delegate = delegate {
+                delegate.audioPlayer(self, didFailWithError: .PlayingError)
+            }
+            
             return
         }
         
@@ -62,7 +73,7 @@ class AudioEffectPlayer {
         engine.reset()
         
         if let delegate = delegate {
-            delegate.audioPlayerDidStopPlaying(self)
+            delegate.audioPlayerDidStop(self)
         }
     }
     

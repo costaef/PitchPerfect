@@ -25,11 +25,27 @@ enum RecordingMessages {
     static let Recording = "Recording in progress..."
     static let Stopped = "Saving recorded audio..."
     static let FinishRecording = "Success!"
-    static let Error = "An error occured when recording. Please tap to record again."
+    static let Error = "An error occured while recording. Please tap to record again."
+}
+
+enum AlertActions {
+    static let Dismiss = "Dismiss"
+}
+
+enum AlertTitles {
+    static let AudioFileNil = "Audio File Error"
+    static let AudioFileError = "Audio File Error"
+    static let AudioEngineError = "Audio Engine Error"
+}
+
+enum AlertMessages {
+    static let AudioFileNil = "The audio file was not found."
+    static let AudioFileError = "Something went wrong with the recorded audio file."
+    static let AudioEngineError = "The audio player could not play the file."
 }
 
 enum Alerts {
-    static let DismissAlert = "Dismiss"
+    static let DismissAction = "Dismiss"
     static let RecordingDisabledTitle = "Recording Disabled"
     static let RecordingDisabledMessage = "You've disabled this app from recording your microphone. Check Settings."
     static let RecordingFailedTitle = "Recording Failed"

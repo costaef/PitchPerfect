@@ -34,14 +34,20 @@ class PlaySoundsViewController: UIViewController {
         super.viewDidLoad()
         
         guard fileUrl != nil else {
-            // TODO: Handle error
+            
+            let alert = Alert(title: AlertTitles.AudioFileNil, message: AlertMessages.AudioFileNil)
+            self.showAlert(alert, completion: {
+                DispatchQueue.main.async {
+                    self.dismiss(animated: true, completion: nil)
+                }
+            })
+            
             return
         }
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
 
@@ -71,7 +77,8 @@ class PlaySoundsViewController: UIViewController {
                 player.play(withEffect: .reverb)
             }
         } else {
-            // TODO: Handle error
+            // A play button with unhandled tag was pressed. Do nothing.
+            return
         }
     }
     
@@ -102,14 +109,34 @@ class PlaySoundsViewController: UIViewController {
         echoButton.isEnabled = enabled
         reverbButton.isEnabled = enabled
     }
-    
-    
-    
 }
 
 extension PlaySoundsViewController: AudioEffectPlayerDelegate {
-    
-    func audioPlayerDidStopPlaying(_ audioPlayer: AudioEffectPlayer) {
+
+    func audioPlayerDidStop(_ audioPlayer: AudioEffectPlayer) {
         update(playingState: .NotPlaying)
+    }
+    
+    func audioPlayer(_ audioPlayer: AudioEffectPlayer, didFailWithError error: AudioEffectPlayerError) {
+        
+        switch error {
+        case .FileError:
+            let alert = Alert(title: AlertTitles.AudioFileError, message: AlertMessages.AudioFileError)
+            self.showAlert(alert, completion: {
+                DispatchQueue.main.async {
+                    self.update(playingState: .NotPlaying)
+                    self.dismiss(animated: true, completion: nil)
+                }
+            })
+            
+        case .PlayingError:
+            let alert = Alert(title: AlertTitles.AudioEngineError, message: AlertMessages.AudioEngineError)
+            self.showAlert(alert, completion: {
+                DispatchQueue.main.async {
+                    self.update(playingState: .NotPlaying)
+                    self.dismiss(animated: true, completion: nil)
+                }
+            })
+        }
     }
 }
