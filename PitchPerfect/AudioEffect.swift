@@ -22,27 +22,27 @@ struct AudioEffect {
         self.isReverbEnabled = reverb
     }
     
-    static var snailEffect: AudioEffect {
+    static var snail: AudioEffect {
         return AudioEffect(rate: 0.5)
     }
     
-    static var rabbitEffect: AudioEffect {
+    static var rabbit: AudioEffect {
         return AudioEffect(rate: 1.5)
     }
     
-    static var chipmunkEffect: AudioEffect {
+    static var chipmunk: AudioEffect {
         return AudioEffect(pitch: 1000)
     }
     
-    static var darthVaderEffect: AudioEffect {
+    static var darthVader: AudioEffect {
         return AudioEffect(pitch: -1000)
     }
     
-    static var echoEffect: AudioEffect {
+    static var echo: AudioEffect {
         return AudioEffect(echo: true)
     }
     
-    static var reverbEffect: AudioEffect {
+    static var reverb: AudioEffect {
         return AudioEffect(reverb: true)
     }
 }

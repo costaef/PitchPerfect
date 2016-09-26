@@ -18,8 +18,8 @@ class PlaySoundsViewController: UIViewController {
     @IBOutlet weak var reverbButton: UIButton!
     @IBOutlet weak var stopButton: UIButton!
     
-    var recordedAudioFileUrl: URL?
-    var audioPlayer: AudioEffectPlayer!
+    var fileUrl: URL?
+    var player: AudioEffectPlayer!
     
     enum PlayButtonType: Int {
         case Snail = 0, Rabbit, Chipmunk, DarthVader, Echo, Reverb
@@ -33,12 +33,10 @@ class PlaySoundsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        guard recordedAudioFileUrl != nil else {
+        guard fileUrl != nil else {
             // TODO: Handle error
             return
         }
-        
-        showAlert(title: "Test", message: "Audio File OK.")
     }
 
     override func didReceiveMemoryWarning() {
@@ -53,24 +51,24 @@ class PlaySoundsViewController: UIViewController {
         
         if let playButtonType = PlayButtonType(rawValue: sender.tag) {
             
-            configureUI(playingState: .Playing)
+            update(playingState: .Playing)
             
-            audioPlayer = AudioEffectPlayer(audioFileUrl: recordedAudioFileUrl!)
-            audioPlayer.delegate = self
+            player = AudioEffectPlayer(fileUrl: fileUrl!)
+            player.delegate = self
             
             switch playButtonType {
             case .Snail:
-                audioPlayer.play(withAudioEffect: .snailEffect)
+                player.play(withEffect: .snail)
             case .Rabbit:
-                audioPlayer.play(withAudioEffect: .rabbitEffect)
+                player.play(withEffect: .rabbit)
             case .Chipmunk:
-                audioPlayer.play(withAudioEffect: .chipmunkEffect)
+                player.play(withEffect: .chipmunk)
             case .DarthVader:
-                audioPlayer.play(withAudioEffect: .darthVaderEffect)
+                player.play(withEffect: .darthVader)
             case .Echo:
-                audioPlayer.play(withAudioEffect: .echoEffect)
+                player.play(withEffect: .echo)
             case .Reverb:
-                audioPlayer.play(withAudioEffect: .reverbEffect)
+                player.play(withEffect: .reverb)
             }
         } else {
             // TODO: Handle error
@@ -79,24 +77,24 @@ class PlaySoundsViewController: UIViewController {
     
     @IBAction func stopButtonTouch(_ sender: UIButton) {
         
-        audioPlayer.stopAudio()
+        player.stop()
     }
     
     
     // MARK: - Configure UI
     
-    func configureUI(playingState: PlayingState) {
+    func update(playingState: PlayingState) {
         switch playingState {
         case .Playing:
-            playButtons(enabled: false)
+            enablePlayButtons(false)
             stopButton.isEnabled = true
         case .NotPlaying:
-            playButtons(enabled: true)
+            enablePlayButtons(true)
             stopButton.isEnabled = false
         }
     }
     
-    func playButtons(enabled: Bool) {
+    func enablePlayButtons(_ enabled: Bool) {
         snailButton.isEnabled = enabled
         rabbitButton.isEnabled = enabled
         chipmunkButton.isEnabled = enabled
@@ -112,6 +110,6 @@ class PlaySoundsViewController: UIViewController {
 extension PlaySoundsViewController: AudioEffectPlayerDelegate {
     
     func audioPlayerDidStopPlaying(_ audioPlayer: AudioEffectPlayer) {
-        configureUI(playingState: .NotPlaying)
+        update(playingState: .NotPlaying)
     }
 }

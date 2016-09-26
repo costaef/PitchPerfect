@@ -13,19 +13,19 @@ import Foundation
 // and works as a pure namespace.
 
 enum FileNames {
-    static let recordedAudioFileName = "recordedAudio.wav"
+    static let RecordedAudio = "recordedAudio.wav"
 }
 
 enum SegueIdentifiers {
-    static let stopRecordingSegueIdentifier = "stopRecordingSegue"
+    static let StopRecording = "stopRecordingSegue"
 }
 
 enum RecordingMessages {
-    static let newRecord = "Tap to record"
-    static let recording = "Recording in progress..."
-    static let stopped = "Saving recorded audio..."
-    static let finishRecording = "Success!"
-    static let error = "An error occured when recording. Please tap to record again."
+    static let NotRecording = "Tap to record"
+    static let Recording = "Recording in progress..."
+    static let Stopped = "Saving recorded audio..."
+    static let FinishRecording = "Success!"
+    static let Error = "An error occured when recording. Please tap to record again."
 }
 
 enum Alerts {

@@ -17,8 +17,8 @@ class RecordSoundsViewController: UIViewController {
     
     var audioRecorder: AVAudioRecorder?
     
-    enum RecordingState {
-        case NewRecord, Recording, Stopped, FinishRecording, Error
+    enum ViewState {
+        case NotRecording, Recording, Stopped, FinishRecording, Error
     }
     
     
@@ -29,7 +29,7 @@ class RecordSoundsViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        configureUI(recordingState: .NewRecord)
+        update(viewState: .NotRecording)
     }
 
     override func didReceiveMemoryWarning() {
@@ -43,9 +43,9 @@ class RecordSoundsViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Pass the recorded audio URL to the play sounds view controller.
         
-        if segue.identifier == SegueIdentifiers.stopRecordingSegueIdentifier {
+        if segue.identifier == SegueIdentifiers.StopRecording {
             let playSoundsVC = segue.destination as! PlaySoundsViewController
-            playSoundsVC.recordedAudioFileUrl = sender as? URL
+            playSoundsVC.fileUrl = sender as? URL
         }
     }
     
@@ -54,49 +54,49 @@ class RecordSoundsViewController: UIViewController {
 
     @IBAction func recordButtonTouch(_ sender: UIButton) {
         
-        audioRecorder = createAudioRecorder(fileName: FileNames.recordedAudioFileName)
+        audioRecorder = makeAudioRecorder(fileName: FileNames.RecordedAudio)
         
         if let audioRecorder = audioRecorder {
-            configureUI(recordingState: .Recording)
-            startRecordingAudio(audioRecorder: audioRecorder)
+            update(viewState: .Recording)
+            start(audioRecorder)
         }
     }
     
     @IBAction func stopButtonTouch(_ sender: UIButton) {
         
         if let audioRecorder = audioRecorder {
-            configureUI(recordingState: .Stopped)
-            stopRecordingAudio(audioRecorder: audioRecorder)
+            update(viewState: .Stopped)
+            stop(audioRecorder)
         } else {
-            configureUI(recordingState: .Error)
+            update(viewState: .Error)
         }
     }
     
     
     // MARK: - UI Configuration
     
-    func configureUI(recordingState: RecordingState) {
-        switch recordingState {
-        case .NewRecord:
+    func update(viewState state: ViewState) {
+        switch state {
+        case .NotRecording:
             self.recordButton.isEnabled = true
             self.stopButton.isEnabled = false
-            self.recordLabel.text = RecordingMessages.newRecord
+            self.recordLabel.text = RecordingMessages.NotRecording
         case .Recording:
             self.recordButton.isEnabled = false
             self.stopButton.isEnabled = true
-            self.recordLabel.text = RecordingMessages.recording
+            self.recordLabel.text = RecordingMessages.Recording
         case .Stopped:
             self.recordButton.isEnabled = false
             self.stopButton.isEnabled = false
-            self.recordLabel.text = RecordingMessages.stopped
+            self.recordLabel.text = RecordingMessages.Stopped
         case .FinishRecording:
             self.recordButton.isEnabled = false
             self.stopButton.isEnabled = false
-            self.recordLabel.text = RecordingMessages.finishRecording
+            self.recordLabel.text = RecordingMessages.FinishRecording
         case .Error:
             self.recordButton.isEnabled = true
             self.stopButton.isEnabled = false
-            self.recordLabel.text = RecordingMessages.error
+            self.recordLabel.text = RecordingMessages.Error
         }
     }
 }

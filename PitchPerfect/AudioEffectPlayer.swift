@@ -15,17 +15,17 @@ protocol AudioEffectPlayerDelegate {
 
 class AudioEffectPlayer {
     
-    private lazy var audioFile = AVAudioFile()
-    private var audioEngine = AVAudioEngine()
+    private lazy var file = AVAudioFile()
+    private var engine = AVAudioEngine()
     
     private var stopTimer: Timer?
     
     var delegate: AudioEffectPlayerDelegate?
     
     
-    init(audioFileUrl: URL) {
+    init(fileUrl: URL) {
         do {
-            try audioFile = AVAudioFile(forReading: audioFileUrl)
+            try file = AVAudioFile(forReading: fileUrl)
         } catch {
             // TODO: Handle error
             return
@@ -35,14 +35,14 @@ class AudioEffectPlayer {
     
     // MARK: - Player Functions
     
-    func play(withAudioEffect effect: AudioEffect) {
+    func play(withEffect effect: AudioEffect) {
         
-        attachAllNodes(rate: effect.rate, pitch: effect.pitch)
-        connectAudioNodes(audioNodeList(forEffect: effect))
-        scheduleAudioFile(atTime: nil, rate: effect.rate)
+        attachNodes(effect: effect)
+        connect(nodes(forEffect: effect))
+        scheduleAudio(atTime: nil, rate: effect.rate)
         
         do {
-            try audioEngine.start()
+            try engine.start()
         } catch {
             // TODO: Handle error
             return
@@ -51,15 +51,15 @@ class AudioEffectPlayer {
         audioPlayerNode.play()
     }
     
-    @objc func stopAudio() {
+    @objc func stop() {
         
         if let stopTimer = stopTimer {
             stopTimer.invalidate()
         }
         
         audioPlayerNode.stop()
-        audioEngine.stop()
-        audioEngine.reset()
+        engine.stop()
+        engine.reset()
         
         if let delegate = delegate {
             delegate.audioPlayerDidStopPlaying(self)
@@ -77,83 +77,70 @@ class AudioEffectPlayer {
     
     // MARK: - Attach Nodes
     
-    private func attachAudioPlayerNode() {
-        audioEngine.attach(audioPlayerNode)
-    }
-    
-    private func attachChangeRatePitchNode(rate: Float? = nil, pitch: Float? = nil) {
-        if let rate = rate {
+    private func attachNodes(effect: AudioEffect) {
+        engine.attach(audioPlayerNode)
+        
+        if let rate = effect.rate {
             changeRatePitchNode.rate = rate
         }
         
-        if let pitch = pitch {
+        if let pitch = effect.pitch {
             changeRatePitchNode.pitch = pitch
         }
-        audioEngine.attach(changeRatePitchNode)
-    }
-    
-    private func attachEchoNode() {
+        engine.attach(changeRatePitchNode)
+        
         echoNode.loadFactoryPreset(.multiEcho1)
-        audioEngine.attach(echoNode)
-    }
-    
-    private func attachReverbNode() {
+        engine.attach(echoNode)
+        
         reverbNode.loadFactoryPreset(.cathedral)
         reverbNode.wetDryMix = 50
-        audioEngine.attach(reverbNode)
-    }
-    
-    private func attachAllNodes(rate: Float? = nil, pitch: Float? = nil) {
-        attachAudioPlayerNode()
-        attachChangeRatePitchNode(rate: rate, pitch: pitch)
-        attachEchoNode()
-        attachReverbNode()
+        engine.attach(reverbNode)
     }
     
     
     // MARK: - Connect Nodes
     
-    private func audioNodeList(forEffect effect: AudioEffect) -> [AVAudioNode] {
-        var nodeList = [AVAudioNode]()
+    private func nodes(forEffect effect: AudioEffect) -> [AVAudioNode] {
+        var nodes = [AVAudioNode]()
         
         if effect.isEchoEnabled && effect.isReverbEnabled {
-            nodeList = [audioPlayerNode, changeRatePitchNode, echoNode, reverbNode, audioEngine.outputNode]
+            nodes = [audioPlayerNode, changeRatePitchNode, echoNode, reverbNode, engine.outputNode]
         } else if effect.isEchoEnabled {
-            nodeList = [audioPlayerNode, changeRatePitchNode, echoNode, audioEngine.outputNode]
+            nodes = [audioPlayerNode, changeRatePitchNode, echoNode, engine.outputNode]
         } else if effect.isReverbEnabled {
-            nodeList = [audioPlayerNode, changeRatePitchNode, reverbNode, audioEngine.outputNode]
+            nodes = [audioPlayerNode, changeRatePitchNode, reverbNode, engine.outputNode]
         } else {
-            nodeList = [audioPlayerNode, changeRatePitchNode, audioEngine.outputNode]
+            nodes = [audioPlayerNode, changeRatePitchNode, engine.outputNode]
         }
         
-        return nodeList
+        return nodes
     }
     
-    private func connectAudioNodes(_ nodes: [AVAudioNode]) {
+    private func connect(_ nodes: [AVAudioNode]) {
         for i in 0 ..< nodes.count - 1 {
-            audioEngine.connect(nodes[i], to: nodes[i + 1], format: audioFile.processingFormat)
+            engine.connect(nodes[i], to: nodes[i + 1], format: file.processingFormat)
         }
     }
     
     
     // MARK: - Schedule Audio File to Play
     
-    private func scheduleAudioFile(atTime: AVAudioTime?, rate: Float?) {
+    private func scheduleAudio(atTime: AVAudioTime?, rate: Float?) {
         audioPlayerNode.stop()
         
-        audioPlayerNode.scheduleFile(audioFile, at: atTime) {
-            var delayInSeconds = 0.0
+        audioPlayerNode.scheduleFile(file, at: atTime) {
+            var delay = 0.0
             
             if let lastRenderTime = self.audioPlayerNode.lastRenderTime, let playerTime = self.audioPlayerNode.playerTime(forNodeTime: lastRenderTime) {
                 
                 if let rate = rate {
-                    delayInSeconds = Double(self.audioFile.length - playerTime.sampleTime) / Double(self.audioFile.processingFormat.sampleRate) / Double(rate)
+                    delay = Double(self.file.length - playerTime.sampleTime) / Double(self.file.processingFormat.sampleRate) / Double(rate)
                 } else {
-                    delayInSeconds = Double(self.audioFile.length - playerTime.sampleTime) / Double(self.audioFile.processingFormat.sampleRate)
+                    delay = Double(self.file.length - playerTime.sampleTime) / Double(self.file.processingFormat.sampleRate)
                 }
             }
             
-            self.stopTimer = Timer(timeInterval: delayInSeconds, target: self, selector: #selector(self.stopAudio), userInfo: nil, repeats: false)
+            self.stopTimer = Timer(timeInterval: delay, target: self, selector: #selector(self.stop), userInfo: nil, repeats: false)
             RunLoop.main.add(self.stopTimer!, forMode: .defaultRunLoopMode)
         }
     }
