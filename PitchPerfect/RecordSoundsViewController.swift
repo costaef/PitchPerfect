@@ -82,8 +82,10 @@ class RecordSoundsViewController: UIViewController {
                 
                 DispatchQueue.main.async {
                     let alert = Alert(title: AlertTitles.RecordingDisabled, message: AlertMessages.RecordingDisabled)
-                    self.showAlert(alert, completion: { 
-                        self.update(viewState: .Disabled)
+                    self.showAlert(alert, completion: {
+                        DispatchQueue.main.async {
+                            self.update(viewState: .Disabled)
+                        }
                     })
                 }
             }
@@ -96,7 +98,12 @@ class RecordSoundsViewController: UIViewController {
             update(viewState: .Stopped)
             stop(audioRecorder)
         } else {
-            update(viewState: .Error)
+            let alert = Alert(title: AlertTitles.AudioRecorderError, message: AlertMessages.AudioRecorderError)
+            self.showAlert(alert, completion: {
+                DispatchQueue.main.async {
+                    self.update(viewState: .Error)
+                }
+            })
         }
     }
     
