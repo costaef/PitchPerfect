@@ -28,15 +28,16 @@ class AudioEffectPlayer {
     var delegate: AudioEffectPlayerDelegate?
     
     
-    init(fileUrl: URL) {
+    init?(fileUrl: URL, delegate: AudioEffectPlayerDelegate) {
+        self.delegate = delegate
+        
         do {
             try file = AVAudioFile(forReading: fileUrl)
         } catch {
-            if let delegate = delegate {
+            if let delegate = self.delegate {
                 delegate.audioPlayer(self, didFailWithError: .FileError)
             }
-            
-            return
+            return nil
         }
     }
     
@@ -45,21 +46,21 @@ class AudioEffectPlayer {
     
     func play(withEffect effect: AudioEffect) {
         
-        attachNodes(effect: effect)
-        connect(nodes(forEffect: effect))
-        scheduleAudio(atTime: nil, rate: effect.rate)
-        
-        do {
-            try engine.start()
-        } catch {
-            if let delegate = delegate {
-                delegate.audioPlayer(self, didFailWithError: .PlayingError)
-            }
-            
-            return
-        }
-        
-        audioPlayerNode.play()
+//        attachNodes(effect: effect)
+//        connect(nodes(forEffect: effect))
+//        scheduleAudio(atTime: nil, rate: effect.rate)
+//        
+//        do {
+//            try engine.start()
+//        } catch {
+//            if let delegate = delegate {
+//                delegate.audioPlayer(self, didFailWithError: .PlayingError)
+//            }
+//            
+//            return
+//        }
+//        
+//        audioPlayerNode.play()
     }
     
     @objc func stop() {

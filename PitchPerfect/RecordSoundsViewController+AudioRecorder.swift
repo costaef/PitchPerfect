@@ -75,7 +75,7 @@ extension RecordSoundsViewController: AVAudioRecorderDelegate {
             performSegue(withIdentifier: SegueIdentifiers.StopRecording, sender: self.audioRecorder?.url)
         } else {
             let alert = Alert(title: AlertTitles.RecordingFailed, message: AlertMessages.RecordingFailed)
-            self.showAlert(alert, completion: { 
+            self.showAlert(alert, dismissHandler: { action in
                 DispatchQueue.main.async {
                     self.update(viewState: .Error)
                 }

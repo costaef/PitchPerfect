@@ -19,7 +19,7 @@ class PlaySoundsViewController: UIViewController {
     @IBOutlet weak var stopButton: UIButton!
     
     var fileUrl: URL?
-    var player: AudioEffectPlayer!
+    var player: AudioEffectPlayer?
     
     enum PlayButtonType: Int {
         case Snail = 0, Rabbit, Chipmunk, DarthVader, Echo, Reverb
@@ -36,7 +36,7 @@ class PlaySoundsViewController: UIViewController {
         guard fileUrl != nil else {
             
             let alert = Alert(title: AlertTitles.AudioFileNil, message: AlertMessages.AudioFileNil)
-            self.showAlert(alert, completion: {
+            self.showAlert(alert, dismissHandler: { action in
                 DispatchQueue.main.async {
                     self.dismiss(animated: true, completion: nil)
                 }
@@ -57,24 +57,24 @@ class PlaySoundsViewController: UIViewController {
         
         if let playButtonType = PlayButtonType(rawValue: sender.tag) {
             
-            update(playingState: .Playing)
-            
-            player = AudioEffectPlayer(fileUrl: fileUrl!)
-            player.delegate = self
-            
-            switch playButtonType {
-            case .Snail:
-                player.play(withEffect: .snail)
-            case .Rabbit:
-                player.play(withEffect: .rabbit)
-            case .Chipmunk:
-                player.play(withEffect: .chipmunk)
-            case .DarthVader:
-                player.play(withEffect: .darthVader)
-            case .Echo:
-                player.play(withEffect: .echo)
-            case .Reverb:
-                player.play(withEffect: .reverb)
+            if let player = AudioEffectPlayer(fileUrl: fileUrl!, delegate: self) {
+                
+                update(playingState: .Playing)
+                
+                switch playButtonType {
+                case .Snail:
+                    player.play(withEffect: .snail)
+                case .Rabbit:
+                    player.play(withEffect: .rabbit)
+                case .Chipmunk:
+                    player.play(withEffect: .chipmunk)
+                case .DarthVader:
+                    player.play(withEffect: .darthVader)
+                case .Echo:
+                    player.play(withEffect: .echo)
+                case .Reverb:
+                    player.play(withEffect: .reverb)
+                }
             }
         } else {
             // A play button with unhandled tag was pressed. Do nothing.
@@ -84,7 +84,9 @@ class PlaySoundsViewController: UIViewController {
     
     @IBAction func stopButtonTouch(_ sender: UIButton) {
         
-        player.stop()
+        if let player = player {
+            player.stop()
+        }
     }
     
     
@@ -122,19 +124,17 @@ extension PlaySoundsViewController: AudioEffectPlayerDelegate {
         switch error {
         case .FileError:
             let alert = Alert(title: AlertTitles.AudioFileError, message: AlertMessages.AudioFileError)
-            self.showAlert(alert, completion: {
+            self.showAlert(alert, dismissHandler: { action in
                 DispatchQueue.main.async {
                     self.update(playingState: .NotPlaying)
-                    self.dismiss(animated: true, completion: nil)
                 }
             })
             
         case .PlayingError:
             let alert = Alert(title: AlertTitles.AudioEngineError, message: AlertMessages.AudioEngineError)
-            self.showAlert(alert, completion: {
+            self.showAlert(alert, dismissHandler: { action in
                 DispatchQueue.main.async {
                     self.update(playingState: .NotPlaying)
-                    self.dismiss(animated: true, completion: nil)
                 }
             })
         }
