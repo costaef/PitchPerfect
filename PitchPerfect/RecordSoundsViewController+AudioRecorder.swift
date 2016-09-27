@@ -20,7 +20,10 @@ extension RecordSoundsViewController: AVAudioRecorderDelegate {
         do {
             try session.setCategory(AVAudioSessionCategoryPlayAndRecord)
         } catch {
-            // TODO: Error
+            let alert = Alert(title: AlertTitles.AudioSessionError, message: AlertMessages.AudioSessionError)
+            self.showAlert(alert)
+            
+            return nil
         }
         
         var audioRecorder: AVAudioRecorder?
@@ -28,7 +31,10 @@ extension RecordSoundsViewController: AVAudioRecorderDelegate {
         do {
             try audioRecorder = AVAudioRecorder(url: url(for: fileName), settings: [:])
         } catch {
-            // TODO: Error
+            let alert = Alert(title: AlertTitles.AudioRecorderError, message: AlertMessages.AudioRecorderError)
+            self.showAlert(alert)
+            
+            return nil
         }
         
         if let audioRecorder = audioRecorder {
@@ -68,7 +74,12 @@ extension RecordSoundsViewController: AVAudioRecorderDelegate {
             update(viewState: .FinishRecording)
             performSegue(withIdentifier: SegueIdentifiers.StopRecording, sender: self.audioRecorder?.url)
         } else {
-            update(viewState: .Error)
+            let alert = Alert(title: AlertTitles.RecordingFailed, message: AlertMessages.RecordingFailed)
+            self.showAlert(alert, completion: { 
+                DispatchQueue.main.async {
+                    self.update(viewState: .Error)
+                }
+            })
         }
     }
 }

@@ -18,7 +18,7 @@ class RecordSoundsViewController: UIViewController {
     var audioRecorder: AVAudioRecorder?
     
     enum ViewState {
-        case NotRecording, Recording, Stopped, FinishRecording, Error
+        case NotRecording, Recording, Stopped, FinishRecording, Disabled, Error
     }
     
     
@@ -54,11 +54,39 @@ class RecordSoundsViewController: UIViewController {
 
     @IBAction func recordButtonTouch(_ sender: UIButton) {
         
-        audioRecorder = makeAudioRecorder(fileName: FileNames.RecordedAudio)
+        let session = AVAudioSession.sharedInstance()
         
-        if let audioRecorder = audioRecorder {
-            update(viewState: .Recording)
-            start(audioRecorder)
+        session.requestRecordPermission { (granted) in
+            // Request permission to access the device microphone.
+            //
+            // If the user had previously granted or denied recording permission, the block executes 
+            // immediately and without displaying a recording permission alert.
+            //
+            // If the user has not yet granted or denied permission the system displays a recording 
+            // permission alert and executes the block after the user responds to it.
+            
+            if granted {
+                self.audioRecorder = self.makeAudioRecorder(fileName: FileNames.RecordedAudio)
+                
+                if let audioRecorder = self.audioRecorder {
+                    DispatchQueue.main.async {
+                        self.update(viewState: .Recording)
+                        self.start(audioRecorder)
+                    }
+                }
+            } else {
+                // If the user has denied recording permission, they can reenable it 
+                // in Settings > Privacy > Microphone.
+                //
+                // Show an alert to the user about this procedure.
+                
+                DispatchQueue.main.async {
+                    let alert = Alert(title: AlertTitles.RecordingDisabled, message: AlertMessages.RecordingDisabled)
+                    self.showAlert(alert, completion: { 
+                        self.update(viewState: .Disabled)
+                    })
+                }
+            }
         }
     }
     
@@ -93,6 +121,10 @@ class RecordSoundsViewController: UIViewController {
             self.recordButton.isEnabled = false
             self.stopButton.isEnabled = false
             self.recordLabel.text = RecordingMessages.FinishRecording
+        case .Disabled:
+            self.recordButton.isEnabled = false
+            self.stopButton.isEnabled = false
+            self.recordLabel.text = RecordingMessages.Disabled
         case .Error:
             self.recordButton.isEnabled = true
             self.stopButton.isEnabled = false

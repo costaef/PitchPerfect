@@ -25,7 +25,8 @@ enum RecordingMessages {
     static let Recording = "Recording in progress..."
     static let Stopped = "Saving recorded audio..."
     static let FinishRecording = "Success!"
-    static let Error = "An error occured while recording. Please tap to record again."
+    static let Disabled = "Record Permission Denied"
+    static let Error = "An error occured while recording. Please tap to record again"
 }
 
 enum AlertActions {
@@ -33,26 +34,21 @@ enum AlertActions {
 }
 
 enum AlertTitles {
+    static let AudioSessionError = "Audio Session Error"
+    static let RecordingDisabled = "Recording Disabled"
+    static let AudioRecorderError = "Audio Recorder Error"
+    static let RecordingFailed = "Recording Failed"
     static let AudioFileNil = "Audio File Error"
     static let AudioFileError = "Audio File Error"
     static let AudioEngineError = "Audio Engine Error"
 }
 
 enum AlertMessages {
+    static let AudioSessionError = "Something went wrong with your recording. Please try to record again."
+    static let RecordingDisabled = "You've disabled this app from recording your microphone. Check Settings > Privacy > Microphone."
+    static let AudioRecorderError = "Something went wrong with your recording. Please try to record again."
+    static let RecordingFailed = "Something went wrong with your recording. Please try to record again."
     static let AudioFileNil = "The audio file was not found."
     static let AudioFileError = "Something went wrong with the recorded audio file."
     static let AudioEngineError = "The audio player could not play the file."
-}
-
-enum Alerts {
-    static let DismissAction = "Dismiss"
-    static let RecordingDisabledTitle = "Recording Disabled"
-    static let RecordingDisabledMessage = "You've disabled this app from recording your microphone. Check Settings."
-    static let RecordingFailedTitle = "Recording Failed"
-    static let RecordingFailedMessage = "Something went wrong with your recording."
-    static let AudioRecorderError = "Audio Recorder Error"
-    static let AudioSessionError = "Audio Session Error"
-    static let AudioRecordingError = "Audio Recording Error"
-    static let AudioFileError = "Audio File Error"
-    static let AudioEngineError = "Audio Engine Error"
 }
