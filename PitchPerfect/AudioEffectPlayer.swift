@@ -18,12 +18,12 @@ enum AudioEffectPlayerError: Error {
     case FileError, PlayingError
 }
 
-class AudioEffectPlayer {
+final class AudioEffectPlayer {
     
-    private lazy var file = AVAudioFile()
-    private var engine = AVAudioEngine()
+    private var file: AVAudioFile
+    private var engine: AVAudioEngine!
     
-    private var stopTimer: Timer?
+    private var stopTimer = Timer()
     
     var delegate: AudioEffectPlayerDelegate?
     
@@ -34,9 +34,6 @@ class AudioEffectPlayer {
         do {
             try file = AVAudioFile(forReading: fileUrl)
         } catch {
-            if let delegate = self.delegate {
-                delegate.audioPlayer(self, didFailWithError: .FileError)
-            }
             return nil
         }
     }
@@ -46,28 +43,28 @@ class AudioEffectPlayer {
     
     func play(withEffect effect: AudioEffect) {
         
-//        attachNodes(effect: effect)
-//        connect(nodes(forEffect: effect))
-//        scheduleAudio(atTime: nil, rate: effect.rate)
-//        
-//        do {
-//            try engine.start()
-//        } catch {
-//            if let delegate = delegate {
-//                delegate.audioPlayer(self, didFailWithError: .PlayingError)
-//            }
-//            
-//            return
-//        }
-//        
-//        audioPlayerNode.play()
+        engine = AVAudioEngine()
+        
+        attachNodes(effect: effect)
+        connect(nodes(forEffect: effect))
+        scheduleAudio(atTime: nil, rate: effect.rate)
+        
+        do {
+            try engine.start()
+        } catch {
+            if let delegate = delegate {
+                delegate.audioPlayer(self, didFailWithError: .PlayingError)
+            }
+            
+            return
+        }
+        
+        audioPlayerNode.play()
     }
     
     @objc func stop() {
         
-        if let stopTimer = stopTimer {
-            stopTimer.invalidate()
-        }
+        stopTimer.invalidate()
         
         audioPlayerNode.stop()
         engine.stop()
@@ -153,7 +150,7 @@ class AudioEffectPlayer {
             }
             
             self.stopTimer = Timer(timeInterval: delay, target: self, selector: #selector(self.stop), userInfo: nil, repeats: false)
-            RunLoop.main.add(self.stopTimer!, forMode: .defaultRunLoopMode)
+            RunLoop.main.add(self.stopTimer, forMode: .defaultRunLoopMode)
         }
     }
 }

@@ -26,8 +26,7 @@ class PlaySoundsViewController: UIViewController {
     }
     
     enum PlayingState {
-        case Playing
-        case NotPlaying
+        case Playing, NotPlaying
     }
     
     override func viewDidLoad() {
@@ -36,14 +35,14 @@ class PlaySoundsViewController: UIViewController {
         guard fileUrl != nil else {
             
             let alert = Alert(title: AlertTitles.AudioFileNil, message: AlertMessages.AudioFileNil)
-            self.showAlert(alert, dismissHandler: { action in
-                DispatchQueue.main.async {
-                    self.dismiss(animated: true, completion: nil)
-                }
-            })
+            self.showAlert(alert)
             
             return
         }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        update(playingState: .NotPlaying)
     }
 
     override func didReceiveMemoryWarning() {
@@ -58,6 +57,8 @@ class PlaySoundsViewController: UIViewController {
         if let playButtonType = PlayButtonType(rawValue: sender.tag) {
             
             if let player = AudioEffectPlayer(fileUrl: fileUrl!, delegate: self) {
+                
+                self.player = player
                 
                 update(playingState: .Playing)
                 

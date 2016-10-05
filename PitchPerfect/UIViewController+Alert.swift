@@ -24,12 +24,12 @@ extension UIViewController {
     
     func showAlert(_ alert: Alert, dismissHandler handler: ((UIAlertAction) -> Void)? = nil) {
         let alertController  = UIAlertController(title: alert.title, message: alert.message, preferredStyle: .alert)
-        alertController.addAction(makeDismissAction(handler))
+        alertController.addAction(makeDismissAction(handler: handler))
         
         self.present(alertController, animated: alert.animated, completion: nil)
     }
     
-    func makeDismissAction(_ handler: ((UIAlertAction) -> Void)?) -> UIAlertAction {
+    func makeDismissAction(handler: ((UIAlertAction) -> Void)?) -> UIAlertAction {
         return UIAlertAction(title: AlertActions.Dismiss, style: .default, handler: handler)
     }
 }
