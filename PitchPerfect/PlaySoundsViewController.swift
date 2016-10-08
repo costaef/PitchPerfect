@@ -117,7 +117,9 @@ class PlaySoundsViewController: UIViewController {
 extension PlaySoundsViewController: AudioEffectPlayerDelegate {
 
     func audioPlayerDidStop(_ audioPlayer: AudioEffectPlayer) {
-        update(playingState: .NotPlaying)
+        if let currentPlayer = self.player, currentPlayer == audioPlayer {
+            update(playingState: .NotPlaying)
+        }
     }
     
     func audioPlayer(_ audioPlayer: AudioEffectPlayer, didFailWithError error: AudioEffectPlayerError) {

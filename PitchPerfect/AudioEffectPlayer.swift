@@ -20,13 +20,18 @@ enum AudioEffectPlayerError: Error {
 
 final class AudioEffectPlayer {
     
+    fileprivate let id = UUID().uuidString
+    
     private var file: AVAudioFile
     private var engine: AVAudioEngine!
     
     private var stopTimer = Timer()
+    private var stopTimerCount = 0
+    
+    private var audioRate: Float?
     
     var delegate: AudioEffectPlayerDelegate?
-    
+
     
     init?(fileUrl: URL, delegate: AudioEffectPlayerDelegate) {
         self.delegate = delegate
@@ -49,6 +54,8 @@ final class AudioEffectPlayer {
         connect(nodes(forEffect: effect))
         scheduleAudio(atTime: nil, rate: effect.rate)
         
+        audioRate = effect.rate
+        
         do {
             try engine.start()
         } catch {
@@ -62,7 +69,7 @@ final class AudioEffectPlayer {
         audioPlayerNode.play()
     }
     
-    @objc func stop() {
+    func stop() {
         
         stopTimer.invalidate()
         
@@ -138,19 +145,44 @@ final class AudioEffectPlayer {
         audioPlayerNode.stop()
         
         audioPlayerNode.scheduleFile(file, at: atTime) {
-            var delay = 0.0
             
-            if let lastRenderTime = self.audioPlayerNode.lastRenderTime, let playerTime = self.audioPlayerNode.playerTime(forNodeTime: lastRenderTime) {
-                
-                if let rate = rate {
-                    delay = Double(self.file.length - playerTime.sampleTime) / Double(self.file.processingFormat.sampleRate) / Double(rate)
-                } else {
-                    delay = Double(self.file.length - playerTime.sampleTime) / Double(self.file.processingFormat.sampleRate)
-                }
+            let delay = self.audioRemainingTime(rate: rate)
+            self.configureStopTimer(withInterval: delay)
+        }
+    }
+    
+    private func audioRemainingTime(rate: Float?) -> TimeInterval {
+        var remaining = 0.0
+        
+        if let lastRenderTime = self.audioPlayerNode.lastRenderTime, let playerTime = self.audioPlayerNode.playerTime(forNodeTime: lastRenderTime) {
+            
+            if let rate = rate {
+                remaining = Double(self.file.length - playerTime.sampleTime) / Double(self.file.processingFormat.sampleRate) / Double(rate)
+            } else {
+                remaining = Double(self.file.length - playerTime.sampleTime) / Double(self.file.processingFormat.sampleRate)
             }
-            
-            self.stopTimer = Timer(timeInterval: delay, target: self, selector: #selector(self.stop), userInfo: nil, repeats: false)
+        }
+        
+        return remaining
+    }
+    
+    private func configureStopTimer(withInterval interval: TimeInterval) {
+        
+        DispatchQueue.main.async {
+            self.stopTimer = Timer(timeInterval: interval, target: self, selector: #selector(self.timerDidFire(_:)), userInfo: nil, repeats: false)
             RunLoop.main.add(self.stopTimer, forMode: .defaultRunLoopMode)
         }
+    }
+    
+    @objc private func timerDidFire(_ timer: Timer) {
+        
+        stop()
+    }
+}
+
+extension AudioEffectPlayer: Equatable {
+    
+    static func ==(lhs: AudioEffectPlayer, rhs: AudioEffectPlayer) -> Bool {
+        return lhs.id == rhs.id
     }
 }
